@@ -1,49 +1,48 @@
-//your JS code here. If required.
-// State variables
-let selectedTiles = [];
-let imageClasses = [];
-let resetBtn, verifyBtn, para;
+let selected = [];
+let resetBtn = null;
+let verifyBtn = null;
+let para = null;
 
-// Create heading
+// Heading
 const h3 = document.createElement("h3");
 h3.id = "h";
-h3.innerText = "Please click on the identical tiles to verify that you are not a robot.";
+h3.innerText =
+  "Please click on the identical tiles to verify that you are not a robot.";
 document.body.appendChild(h3);
 
-// Generate images
+// Load images
 function loadImages() {
-  document.querySelectorAll("img, button, p").forEach(e => e.remove());
-  selectedTiles = [];
-  imageClasses = [];
+  document.querySelectorAll("img, button, p").forEach(el => el.remove());
 
-  // Base images
-  const baseImages = ["img1", "img2", "img3", "img4", "img5"];
+  selected = [];
+  resetBtn = null;
+  verifyBtn = null;
+  para = null;
 
-  // Pick one random image to duplicate
-  const duplicate = baseImages[Math.floor(Math.random() * baseImages.length)];
+  const images = ["img1", "img2", "img3", "img4", "img5"];
+  const duplicate = images[Math.floor(Math.random() * images.length)];
+  const allImages = [...images, duplicate];
 
-  imageClasses = [...baseImages, duplicate];
-
-  // Shuffle images
-  imageClasses.sort(() => Math.random() - 0.5);
+  // Shuffle
+  allImages.sort(() => Math.random() - 0.5);
 
   // Render images
-  imageClasses.forEach(cls => {
+  allImages.forEach(name => {
     const img = document.createElement("img");
-    img.className = cls;
-    img.addEventListener("click", () => handleImageClick(img));
+    img.setAttribute("data-ns-test", name);
+    img.addEventListener("click", () => onImageClick(img));
     document.body.appendChild(img);
   });
 }
 
-// Handle image click
-function handleImageClick(img) {
-  if (selectedTiles.includes(img)) return;
-  if (selectedTiles.length === 2) return;
+// Image click handler
+function onImageClick(img) {
+  if (selected.includes(img)) return;
+  if (selected.length === 2) return;
 
-  selectedTiles.push(img);
+  selected.push(img);
 
-  // Show reset button after first click
+  // Reset button (State 2)
   if (!resetBtn) {
     resetBtn = document.createElement("button");
     resetBtn.id = "reset";
@@ -52,25 +51,28 @@ function handleImageClick(img) {
     document.body.appendChild(resetBtn);
   }
 
-  // Show verify button after two selections
-  if (selectedTiles.length === 2 && !verifyBtn) {
+  // Verify button (State 3)
+  if (selected.length === 2 && !verifyBtn) {
     verifyBtn = document.createElement("button");
-    verifyBtn.id = "verify";
+    verifyBtn.id = "btn"; // IMPORTANT
     verifyBtn.innerText = "Verify";
-    verifyBtn.onclick = verifyUser;
+    verifyBtn.onclick = verify;
     document.body.appendChild(verifyBtn);
   }
 }
 
-// Verify logic
-function verifyUser() {
+// Verify logic (State 4)
+function verify() {
   verifyBtn.remove();
   verifyBtn = null;
 
   para = document.createElement("p");
   para.id = "para";
 
-  if (selectedTiles[0].className === selectedTiles[1].className) {
+  if (
+    selected[0].getAttribute("data-ns-test") ===
+    selected[1].getAttribute("data-ns-test")
+  ) {
     para.innerText = "You are a human. Congratulations!";
   } else {
     para.innerText =
@@ -80,5 +82,5 @@ function verifyUser() {
   document.body.appendChild(para);
 }
 
-// Initial load
+// Initial state
 loadImages();
