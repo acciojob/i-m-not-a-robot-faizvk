@@ -10,6 +10,7 @@ document.body.appendChild(h3);
 
 function loadImages() {
   document.querySelectorAll("img, button, p").forEach(el => el.remove());
+
   selected = [];
   resetBtn = null;
   verifyBtn = null;
@@ -18,14 +19,13 @@ function loadImages() {
   const images = ["img1", "img2", "img3", "img4", "img5"];
   const duplicate = images[Math.floor(Math.random() * images.length)];
   const allImages = [...images, duplicate];
+
   allImages.sort(() => Math.random() - 0.5);
 
-  allImages.forEach((className) => {
+  allImages.forEach(className => {
     const img = document.createElement("img");
     img.className = className;
     img.setAttribute("data-ns-test", className);
-    img.style.width = "100px";
-    img.style.height = "100px";
     img.addEventListener("click", () => onImageClick(img));
     document.body.appendChild(img);
   });
@@ -47,7 +47,6 @@ function onImageClick(img) {
   if (selected.length === 2 && !verifyBtn) {
     verifyBtn = document.createElement("button");
     verifyBtn.id = "btn";
-    verifyBtn.setAttribute("id", "verify");
     verifyBtn.innerText = "Verify";
     verifyBtn.onclick = verify;
     document.body.appendChild(verifyBtn);
@@ -55,11 +54,6 @@ function onImageClick(img) {
 }
 
 function verify() {
-  if (verifyBtn) {
-    verifyBtn.remove();
-    verifyBtn = null;
-  }
-
   para = document.createElement("p");
   para.id = "para";
 
@@ -69,6 +63,11 @@ function verify() {
     para.innerText = "We can't verify you as a human. You selected the non-identical tiles.";
   }
 
+  if (verifyBtn) {
+    verifyBtn.remove();
+    verifyBtn = null;
+  }
+  
   document.body.appendChild(para);
 }
 
