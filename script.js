@@ -23,13 +23,15 @@ function loadImages() {
   const duplicate = images[Math.floor(Math.random() * images.length)];
   const allImages = [...images, duplicate];
 
-  // Shuffle
+  // Shuffle images
   allImages.sort(() => Math.random() - 0.5);
 
   // Render images
-  allImages.forEach(name => {
+  allImages.forEach(className => {
     const img = document.createElement("img");
-    img.setAttribute("data-ns-test", name);
+    img.className = className; // 🔥 REQUIRED for CSS & visibility
+    img.setAttribute("data-ns-test", className);
+
     img.addEventListener("click", () => onImageClick(img));
     document.body.appendChild(img);
   });
@@ -37,12 +39,15 @@ function loadImages() {
 
 // Image click handler
 function onImageClick(img) {
+  // Prevent double click on same image
   if (selected.includes(img)) return;
+
+  // Prevent more than 2 selections
   if (selected.length === 2) return;
 
   selected.push(img);
 
-  // Reset button (State 2)
+  // Show Reset button (State 2)
   if (!resetBtn) {
     resetBtn = document.createElement("button");
     resetBtn.id = "reset";
@@ -51,10 +56,10 @@ function onImageClick(img) {
     document.body.appendChild(resetBtn);
   }
 
-  // Verify button (State 3)
+  // Show Verify button (State 3)
   if (selected.length === 2 && !verifyBtn) {
     verifyBtn = document.createElement("button");
-    verifyBtn.id = "btn"; // IMPORTANT
+    verifyBtn.id = "verify"; // 🔥 REQUIRED ID
     verifyBtn.innerText = "Verify";
     verifyBtn.onclick = verify;
     document.body.appendChild(verifyBtn);
@@ -70,8 +75,7 @@ function verify() {
   para.id = "para";
 
   if (
-    selected[0].getAttribute("data-ns-test") ===
-    selected[1].getAttribute("data-ns-test")
+    selected[0].className === selected[1].className
   ) {
     para.innerText = "You are a human. Congratulations!";
   } else {
@@ -82,5 +86,5 @@ function verify() {
   document.body.appendChild(para);
 }
 
-// Initial state
+// Initial State
 loadImages();
